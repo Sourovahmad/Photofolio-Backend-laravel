@@ -1,0 +1,134 @@
+.register_area .share_area {
+    background: linear-gradient(to right, #003D40 , #006F78);
+    padding-left: 20px;
+    padding-top: 30px;
+    height: 100%;
+}
+.register_area .share_area h2 {
+    color: #fff;
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+.register_area .share_area h6 {
+    color: #fff;
+    font-size: 23px;
+}
+.register_area .submit_area {
+    margin-top: 30px;
+    margin-left: 50px;
+    margin-right: 50px;
+    overflow-x: hidden;
+}
+.register_area .submit_area h4 {
+    margin-bottom: 3px;
+    font-weight: 600;
+}
+.register_area .submit_area .sub_title {
+    font-weight: 400;
+    padding-bottom: 15px;
+}
+.register_area .submit_area .sub_title a {
+    text-decoration: underline;
+    color: #006F78;
+}
+.register_area .submit_area .input, .register_area .submit_area select {
+    border-bottom: 1px solid #d1cece;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+}
+.register_area .submit_area .input:focus, .register_area .submit_area select:focus {
+    box-shadow: none;
+}
+.register_area .submit_area .label {
+   color: black;
+}
+.register_area .submit_area .check_area p {
+    font-size: 14px;
+}
+.register_area .submit_area .check_area a {
+    text-decoration: underline;
+}
+.register_area .submit_area .registerBtn {
+    background: #006F78;
+    color: #fff;
+    border-radius: 12px;
+    font-weight: 600;
+    border: 1px solid #006F78;
+    padding: 1px 14px 4px;
+}
+
+
+
+/* footer */
+.footer_area {
+    border-top: 1.5px solid #006F78;
+}
+.footer_area p {
+    color: #d1cece;
+    font-size: 16px;
+}
+.footer_area .social_area a {
+    color: #d1cece;
+    border: 1px solid #d1cece;
+    border-radius: 50%;
+    padding: 5px 9px;
+    margin: 0 5px;
+}
+.footer_area .social_area a:first-child{
+    padding: 5px 11px;
+}
+.footer_area .social_area i {
+    font-size: 16px;
+}
+
+
+
+
+
+
+
+/* responsive code */
+@media only screen and (max-width: 600px) {
+    .register_area .share_area {
+        height: 400px;
+        text-align: center;
+    }
+    .register_area .share_area h2 {
+        font-size: 90px;
+        margin-bottom: 30px;
+        margin-top: 30px;
+    }
+    .register_area .share_area h6 {
+        font-size: 25px;
+    }
+    .register_area .submit_area h4 {
+        font-size: 35px;
+    }
+    .register_area .submit_area .sub_title {
+        font-size: 17px;
+    }
+    .register_area .submit_area .loginBtn {
+        padding: 7px 24px 10px;
+        font-size: 18px;
+    }
+    .footer_area p {
+        font-size: 20px;
+        text-align: center;
+        padding-bottom: 10px;
+    }
+    .footer_area .social_area {
+        text-align: center;
+    }
+    .footer_area .social_area a {
+        padding: 7px 11px;
+    }
+    .footer_area .social_area a:first-child{
+        padding: 7px 13px;
+    }
+    .footer_area .social_area i {
+        font-size: 20px;
+        margin-bottom: 30px;
+    }
+  }
