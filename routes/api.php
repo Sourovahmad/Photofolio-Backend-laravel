@@ -35,7 +35,8 @@ Route::post('thumbnail-upload', [ImageController::class, 'thumbnailUpload']);
 Route::post('project-content-upload', [ProjectController::class, 'contentUpload']);
 Route::post('project-content-remover', [ProjectController::class, 'contentDelete']);
 Route::get('user-details', [indexController::class, 'getUserDetails']);
-
+Route::get('user-projects/{user_id}', [indexController::class, 'userProjects']);
+Route::post('user-category-project-filter', [ProjectController::class, 'userCategoryWisedProject']);
 
 //Protected Routes
 Route::middleware(['auth:sanctum'])->group(function () {

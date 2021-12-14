@@ -302,4 +302,28 @@ class ProjectController extends Controller
             $projectContent->save();
         }
     }
+
+    public function userCategoryWisedProject(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required',
+            'category_id' => 'required'
+        ]);
+
+        $projects = project::where('user_id',$request->user_id)->get();
+        $filterProjects = array();
+
+        foreach($projects as $singleProject){
+            $projectCategories = $singleProject->categories;
+            if(!$projectCategories->isEmpty()){
+                foreach($projectCategories as $singleCategory){
+                    if($singleCategory->id === $request->category_id){
+                        array_push($filterProjects, $singleProject);
+                    }
+                }
+            }
+        }
+
+        return $filterProjects;
+    }
 }
