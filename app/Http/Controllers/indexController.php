@@ -14,4 +14,12 @@ class indexController extends Controller
                 "user" => $user,
             ],200);
     }
+
+    public function getUserDetails()
+    {
+       $users = User::with('projects')->get();
+       return response()->json([
+        'users' => $users
+       ],200);
+    }
 }

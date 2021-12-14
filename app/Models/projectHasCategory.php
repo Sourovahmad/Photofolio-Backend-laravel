@@ -14,4 +14,9 @@ class projectHasCategory extends Model
     {
         return $this->belongsTo(category::class, 'category_id', 'id')->get();
     }
+
+    public function projects()
+    {
+        return $this->hasMany(project::class, 'id', 'project_id');
+    }
 }
