@@ -9,6 +9,7 @@ use App\Models\projectHasContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
+
 class ProjectController extends Controller
 {
     /**
@@ -18,7 +19,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $allProjects = project::with('user')->orderBy('id', 'DESC')->get();
+        $allProjects = project::with('user')->where('status', '=' , 1)->orderBy('id', 'DESC')->get();
         $categories = category::all();
 
         return response()->json([
@@ -48,12 +49,14 @@ class ProjectController extends Controller
         $request->validate([
             'title' => "required",
             'categories' => 'required',
-            'thumbnail' => 'required'
+            'thumbnail' => 'required',
+            'fullimage' => 'required'
         ]);
         
         $project = new project;
         $project->title = $request->title;
         $project->thumbnail = $request->thumbnail;
+        $project->fullimage = $request->fullimage;
         $project->user_id = $request->user()->id;
         $project->save();
 
@@ -281,6 +284,18 @@ class ProjectController extends Controller
      }
 
 
+     if($request->type === 'text'){
+         $projectContent = new projectHasContent;
+         $projectContent->project_id = $request->project_id;
+         $projectContent->text = $request->text;
+         $projectContent->save();
+
+         return response()->json([
+            "text" => $request->text
+        ] ,200);
+     }
+
+
     }
 
 
@@ -292,15 +307,17 @@ class ProjectController extends Controller
             $projectContent->delete();
 
         }elseif($projectContent = projectHasContent::where('grid_image_one', $request->image_url)->first()){
-            $projectContent->grid_image_one = null;
             File::delete($request->image_url);
-            $projectContent->save();
+            File::delete($projectContent->grid_image_two);
+            $projectContent->delete();
 
         }elseif($projectContent = projectHasContent::where('grid_image_two', $request->image_url)->first()){
-            $projectContent->grid_image_two = null;
+            File::delete($projectContent->grid_image_one);
             File::delete($request->image_url);
-            $projectContent->save();
+            $projectContent->delete();
         }
+
+
     }
 
     public function userCategoryWisedProject(Request $request)
@@ -310,20 +327,19 @@ class ProjectController extends Controller
             'category_id' => 'required'
         ]);
 
-        $projects = project::where('user_id',$request->user_id)->get();
-        $filterProjects = array();
+        $modelProject = new project();
+        return $projects = project::where('user_id',$request->user_id)->where($modelProject->projectWithCategory($request->category_id))->where('status', '=', 1)->get();
+    }
 
-        foreach($projects as $singleProject){
-            $projectCategories = $singleProject->categories;
-            if(!$projectCategories->isEmpty()){
-                foreach($projectCategories as $singleCategory){
-                    if($singleCategory->id === $request->category_id){
-                        array_push($filterProjects, $singleProject);
-                    }
-                }
-            }
-        }
+    public function activeProject(Request $request)
+    {
+       $request->validate([
+        "project_id" => 'required'
+       ]);
 
-        return $filterProjects;
+        $project =  project::find($request->project_id);
+        $project->status = true;
+        $project->save();
+ 
     }
 }

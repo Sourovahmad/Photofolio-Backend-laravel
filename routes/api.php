@@ -38,6 +38,11 @@ Route::get('user-details', [indexController::class, 'getUserDetails']);
 Route::get('user-projects/{user_id}', [indexController::class, 'userProjects']);
 Route::post('user-category-project-filter', [ProjectController::class, 'userCategoryWisedProject']);
 
+
+
+Route::post('active-project', [ProjectController::class, 'activeProject']);
+
+
 //Protected Routes
 Route::middleware(['auth:sanctum'])->group(function () {
 

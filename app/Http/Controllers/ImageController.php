@@ -6,7 +6,7 @@ use App\Models\image;
 use App\Http\Requests\StoreimageRequest;
 use App\Http\Requests\UpdateimageRequest;
 use Illuminate\Http\Request;
-use Image as InterventionImage;
+use Intervention\Image\ImageManagerStatic as Photo;
 class ImageController extends Controller
 {
     /**
@@ -90,10 +90,25 @@ class ImageController extends Controller
         $request->validate([
             'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
-        $imageName = route('home') ."/" . "thumbnails/". time().'.'.$request->file->extension();  
-        $request->file->move(public_path('thumbnails'), $imageName);
+
+        $fileNameFull =  time() . '.full.' . $request->file->getClientOriginalName();
+        $fileNameSmall = time() . '.small.' . $request->file->getClientOriginalName();
+
+        $imageSize = getimagesize($request->file);
+
+        $pictureSmall = Photo::make($request->file->getRealPath())->fit(278,278);
+        $pictureBig = Photo::make($request->file->getRealPath())->fit($imageSize[0], $imageSize[1]);
+
+        $pictureSmall->save(public_path('thumbnails/'.$fileNameSmall));
+        $pictureBig->save(public_path('thumbnails/'.$fileNameFull));
+
+
+        $newFileNameSmall = route('home') ."/thumbnails" . "/" .$fileNameSmall;
+        $newFileNameBig = route('home') ."/thumbnails" . "/" .$fileNameFull;
+
         return response()->json([
-            "imageName" => $imageName
+            "imageNameSmall" => $newFileNameSmall,
+            "imageNameBig" => $newFileNameBig
         ] ,200);
     }
 }

@@ -24,6 +24,11 @@ class project extends Model
        return $this->hasMany(projectHasContent::class, 'project_id', 'id');
     }
 
+    public function projectWithCategory($category_id)
+    {
+      return $this->hasMany(projectHasCategory::class, 'project_id', 'id')->where('category_id', $category_id);
+    }
+
    
 
 }

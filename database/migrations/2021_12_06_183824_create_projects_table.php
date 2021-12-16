@@ -19,6 +19,8 @@ class CreateProjectsTable extends Migration
             $table->unsignedBigInteger('user_id');
             //categories auto creating by project id
             $table->string('thumbnail');
+            $table->string('fullimage');
+            $table->boolean('status')->default(false);
             //project conent auto creating with project id
             $table->timestamps();
         });

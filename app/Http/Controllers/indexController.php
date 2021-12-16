@@ -30,7 +30,7 @@ class indexController extends Controller
     public function userProjects($user_id)
     {
 
-       $all_projects = project::with('categories')->where('user_id', $user_id)->orderBy('id', 'desc')->get();
+       $all_projects = project::with('categories')->where('user_id', $user_id)->where('status', '=', 1)->orderBy('id', 'desc')->get();
         return response()->json([
             'projects' => $all_projects,
         ],200);

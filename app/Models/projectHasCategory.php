@@ -17,6 +17,6 @@ class projectHasCategory extends Model
 
     public function projects()
     {
-        return $this->hasMany(project::class, 'id', 'project_id');
+        return $this->hasMany(project::class, 'id', 'project_id')->where('status', '=', 1);
     }
 }
