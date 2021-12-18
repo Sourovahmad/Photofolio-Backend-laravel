@@ -342,4 +342,17 @@ class ProjectController extends Controller
         $project->save();
  
     }
+
+
+    public function textDelete(Request $request)
+    {
+       $request->validate([
+           'text' => 'required'
+       ]);
+
+        $content = projectHasContent::where('text', $request->text)->first();
+        $content->delete();
+
+        return response(200);
+    }
 }

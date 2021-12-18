@@ -33,13 +33,22 @@ Route::get('project-content/{project_id}', [ProjectController::class, 'projectCo
 
 Route::post('thumbnail-upload', [ImageController::class, 'thumbnailUpload']);
 Route::post('project-content-upload', [ProjectController::class, 'contentUpload']);
-Route::post('project-content-remover', [ProjectController::class, 'contentDelete']);
+
 Route::get('user-details', [indexController::class, 'getUserDetails']);
 Route::get('user-projects/{user_id}', [indexController::class, 'userProjects']);
 Route::post('user-category-project-filter', [ProjectController::class, 'userCategoryWisedProject']);
 
 
 
+
+//content Remover Section 
+Route::post('project-content-remover', [ProjectController::class, 'contentDelete']);
+Route::post ('project-text-remover', [ProjectController::class, 'textDelete']);
+
+
+
+
+//project publisher
 Route::post('active-project', [ProjectController::class, 'activeProject']);
 
 
