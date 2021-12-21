@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\projectHasContent;
 use App\Http\Requests\StoreprojectHasContentRequest;
 use App\Http\Requests\UpdateprojectHasContentRequest;
+use Illuminate\Http\Request;
 
 class ProjectHasContentController extends Controller
 {
@@ -82,5 +83,23 @@ class ProjectHasContentController extends Controller
     public function destroy(projectHasContent $projectHasContent)
     {
         //
+    }
+
+
+    public function updateText(Request $request)
+    {
+        $request->validate([
+            'content_id' => 'required',
+            'new_text' => 'required'
+        ]);
+
+
+        $content = projectHasContent::find($request->content_id);
+        $content->text = $request->new_text;
+        $content->save();
+
+        return response()->json([
+            "text" => $request->new_text
+        ]);
     }
 }

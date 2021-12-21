@@ -123,7 +123,8 @@ class ProjectController extends Controller
         $request->validate([
             'title' => "required",
             'categories' => 'required',
-            'thumbnail' => 'required'
+            'thumbnail' => 'required',
+            'fullimage' => 'required'
         ]);
 
         $project = project::find($id);
@@ -138,6 +139,7 @@ class ProjectController extends Controller
         }
        
         File::delete($project->thumbnail);
+        File::delete($project->fullimage);
         $project->delete();
 
         // deleted older files
@@ -148,6 +150,7 @@ class ProjectController extends Controller
         $Newproject = new project;
         $Newproject->title = $request->title;
         $Newproject->thumbnail = $request->thumbnail;
+        $Newproject->fullimage = $request->fullimage;
         $Newproject->user_id = $request->user()->id;
         $Newproject->save();
 
@@ -225,6 +228,7 @@ class ProjectController extends Controller
             $request->validate([
                 'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
+
             $imageName = route('home') ."/" . "contentImages/". time().'.'.$request->file->extension(); 
             $request->file->move(public_path('contentImages'), $imageName);
             $projectContent->image_big = $imageName;
@@ -347,12 +351,63 @@ class ProjectController extends Controller
     public function textDelete(Request $request)
     {
        $request->validate([
-           'text' => 'required'
+           'content_id' => 'required'
        ]);
 
-        $content = projectHasContent::where('text', $request->text)->first();
+        $content = projectHasContent::find($request->content_id);
         $content->delete();
-
         return response(200);
+    }
+
+ 
+
+    public function imageUpdate(Request $request)
+    {
+        $request->validate([
+            'previous_image' => 'required',
+            'new_image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+        ]);
+
+        if($projectContent = projectHasContent::where('image_big', $request->previous_image)->first()){
+
+            File::delete($request->previous_image);
+            $imageUrl = $this->imageUploader($request->new_image);
+            $projectContent->image_big = $imageUrl;
+            $projectContent->save();
+            return response()->json([
+                'image_url' => $imageUrl
+            ],200);
+
+        }elseif($projectContent = projectHasContent::where('grid_image_one', $request->image_url)->first()){
+
+            File::delete($request->previous_image);
+            $imageUrl = $this->imageUploader($request->new_image);
+            $projectContent->grid_image_one = $imageUrl;
+            $projectContent->save();
+            return response()->json([
+                'image_url' => $imageUrl
+            ],200);
+
+        }elseif($projectContent = projectHasContent::where('grid_image_two', $request->image_url)->first()){
+
+            File::delete($request->previous_image);
+            $imageUrl = $this->imageUploader($request->new_image);
+            $projectContent->grid_image_two = $imageUrl;
+            $projectContent->save();
+            return response()->json([
+                'image_url' => $imageUrl
+            ],200);
+        }
+
+    }
+
+
+
+    public function imageUploader($Image)
+    {
+        $imageName = route('home') ."/" . "contentImages/". time().'.'.$Image->extension(); 
+        $Image->move(public_path('contentImages'), $imageName);
+
+        return $imageName;
     }
 }
