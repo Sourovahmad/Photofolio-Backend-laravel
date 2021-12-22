@@ -8,6 +8,7 @@ use App\Models\projectHasCategory;
 use App\Models\projectHasContent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
+use Intervention\Image\ImageManagerStatic as Photo;
 
 
 class ProjectController extends Controller
@@ -220,71 +221,138 @@ class ProjectController extends Controller
 
        if($request->type === 'image_big'){
 
-        $projectContent = new projectHasContent;
-        $projectContent->project_id = $request->project_id;
-
-
+            $projectContent = new projectHasContent;
+            $projectContent->project_id = $request->project_id;
+            
 
             $request->validate([
-                'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
             ]);
 
-            $imageName = route('home') ."/" . "contentImages/". time().'.'.$request->file->extension(); 
-            $request->file->move(public_path('contentImages'), $imageName);
-            $projectContent->image_big = $imageName;
+            $fileNameFull =  time() . '.full.' . $request->file->getClientOriginalName();
+
+            $picture = Photo::make($request->file->getRealPath())->fit(1140,550);
+            $picture->save(public_path('contentImages/'.$fileNameFull));
+
+            $newFileNameFull = route('home') ."/contentImages" . "/" .$fileNameFull;
+
+            $projectContent->image_big = $newFileNameFull;
             $projectContent->save();
 
             return response()->json([
-                "imageName" => $imageName
+                "imageName" => $newFileNameFull
             ] ,200);
 
        }
        
        if($request->type === 'grid_image_one'){
 
+
+        if($request->grid_two_project_id === 'noId'){
+
         $projectContent = new projectHasContent;
         $projectContent->project_id = $request->project_id;
 
             $request->validate([
-                'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+                'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
             ]);
 
-            $imageName = route('home') ."/" . "contentImages/". time().'.'.$request->file->extension(); 
-            $request->file->move(public_path('contentImages'), $imageName);
-            $projectContent->grid_image_one = $imageName;
+            $fileNameFull =  time() . '.grid_one.' . $request->file->getClientOriginalName();
+            $picture = Photo::make($request->file->getRealPath())->fit(535,533);
+
+            $picture->save(public_path('contentImages/'.$fileNameFull));
+            $newFileNameFull = route('home') ."/contentImages" . "/" .$fileNameFull;
+
+
+            $projectContent->grid_image_one = $newFileNameFull;
             $projectContent->save();
 
             return response()->json([
-                "imageName" => $imageName,
+                "imageName" => $newFileNameFull,
                 "grid_one_project_id" => $projectContent->id,
             ] ,200);
+
         
-       }
+        }else{
+
+            $projectContent = projectHasContent::find($request->grid_two_project_id);
+            $request->validate([
+                'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
+            ]);
+
+            $fileNameFull =  time() . '.grid_one.' . $request->file->getClientOriginalName();
+            $picture = Photo::make($request->file->getRealPath())->fit(535,533);
+
+            $picture->save(public_path('contentImages/'.$fileNameFull));
+            $newFileNameFull = route('home') ."/contentImages" . "/" .$fileNameFull;
+
+
+            $projectContent->grid_image_one = $newFileNameFull;
+            $projectContent->save();
+
+            return response()->json([
+                "imageName" => $newFileNameFull,
+                "grid_one_project_id" => $projectContent->id,
+            ] ,200);
+        }
+
+        }
+
 
 
 
        if($request->type === 'grid_image_two'){
 
-        if(!is_null($request->grid_one_project_id)){
-            $projectContent = projectHasContent::find($request->grid_one_project_id);
-        }else{
+        if( $request->grid_one_project_id === 'noId'){
+
             $projectContent = new projectHasContent;
             $projectContent->project_id = $request->project_id;
+
+            $request->validate([
+                'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
+            ]);
+
+            $fileNameFull =  time() . '.grid_one.' . $request->file->getClientOriginalName();
+            $picture = Photo::make($request->file->getRealPath())->fit(535,533);
+
+            $picture->save(public_path('contentImages/'.$fileNameFull));
+            $newFileNameFull = route('home') ."/contentImages" . "/" .$fileNameFull;
+
+
+            $projectContent->grid_image_two = $newFileNameFull;
+            $projectContent->save();
+
+            return response()->json([
+                "imageName" => $newFileNameFull,
+                "grid_two_project_id" => $projectContent->id,
+            ] ,200);
+
+
+        }else{
+
+            $projectContent = projectHasContent::find($request->grid_one_project_id);
+            
+            $request->validate([
+                'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg'
+            ]);
+            
+    
+            $fileNameFull =  time() . '.grid_two.' . $request->file->getClientOriginalName();
+    
+            $picture = Photo::make($request->file->getRealPath())->fit(535,533);
+            $picture->save(public_path('contentImages/'.$fileNameFull));
+            $newFileNameFull = route('home') ."/contentImages" . "/" .$fileNameFull;
+    
+            $projectContent->grid_image_two = $newFileNameFull;
+            $projectContent->save();
+    
+            return response()->json([
+                "imageName" => $newFileNameFull
+            ] ,200);
+        
         }
 
-        $request->validate([
-            'file' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
-        
-        $imageName = route('home') ."/" . "contentImages/". time().'.'.$request->file->extension(); 
-        $request->file->move(public_path('contentImages'), $imageName);
-        $projectContent->grid_image_two = $imageName;
-        $projectContent->save();
 
-        return response()->json([
-            "imageName" => $imageName
-        ] ,200);
-    
      }
 
 
@@ -371,14 +439,22 @@ class ProjectController extends Controller
         if($projectContent = projectHasContent::where('image_big', $request->previous_image)->first()){
 
             File::delete($request->previous_image);
-            $imageUrl = $this->imageUploader($request->new_image);
-            $projectContent->image_big = $imageUrl;
+
+            $fileNameFull =  time() . '.full.' . $request->new_image->getClientOriginalName();
+            $picture = Photo::make($request->new_image->getRealPath())->fit(1140,550);
+
+
+            $picture->save(public_path('contentImages/'.$fileNameFull));
+            $newFileNameFull = route('home') ."/contentImages" . "/" .$fileNameFull;
+
+            $projectContent->image_big = $newFileNameFull;
+
             $projectContent->save();
             return response()->json([
-                'image_url' => $imageUrl
+                'image_url' => $newFileNameFull
             ],200);
 
-        }elseif($projectContent = projectHasContent::where('grid_image_one', $request->image_url)->first()){
+        }else if($projectContent = projectHasContent::where('grid_image_one', $request->previous_image)->first()){
 
             File::delete($request->previous_image);
             $imageUrl = $this->imageUploader($request->new_image);
@@ -388,7 +464,7 @@ class ProjectController extends Controller
                 'image_url' => $imageUrl
             ],200);
 
-        }elseif($projectContent = projectHasContent::where('grid_image_two', $request->image_url)->first()){
+        }else if($projectContent = projectHasContent::where('grid_image_two', $request->previous_image)->first()){
 
             File::delete($request->previous_image);
             $imageUrl = $this->imageUploader($request->new_image);
@@ -405,9 +481,11 @@ class ProjectController extends Controller
 
     public function imageUploader($Image)
     {
-        $imageName = route('home') ."/" . "contentImages/". time().'.'.$Image->extension(); 
-        $Image->move(public_path('contentImages'), $imageName);
 
-        return $imageName;
+        $fileNameFull =  time() . '.grid_image.' . $Image->getClientOriginalName();
+        $picture = Photo::make($Image->getRealPath())->fit(535,533);
+        $picture->save(public_path('contentImages/'.$fileNameFull));
+        $newFileNameFull = route('home') ."/contentImages" . "/" .$fileNameFull;
+        return $newFileNameFull;
     }
 }

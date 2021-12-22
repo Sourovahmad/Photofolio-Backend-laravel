@@ -6,7 +6,6 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\indexController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectHasContentController;
-use App\Models\projectHasContent;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -42,12 +41,6 @@ Route::get('categories', [CategoryController::class, 'index']);
 
 
 
-// Project Content uploads
-Route::get('project-content/{project_id}', [ProjectController::class, 'projectContent']);
-Route::post('project-content-upload', [ProjectController::class, 'contentUpload']);
-Route::post('thumbnail-upload', [ImageController::class, 'thumbnailUpload']);
-
-
 
 // Home User Details
 Route::get('user-details', [indexController::class, 'getUserDetails']);
@@ -57,7 +50,13 @@ Route::post('user-category-project-filter', [ProjectController::class, 'userCate
 
 
 
-//content Remover Routes 
+
+
+//content Section
+Route::get('project-content/{project_id}', [ProjectController::class, 'projectContent']);
+Route::post('project-content-upload', [ProjectController::class, 'contentUpload']);
+Route::post('thumbnail-upload', [ImageController::class, 'thumbnailUpload']);
+
 Route::post('project-content-remover', [ProjectController::class, 'contentDelete']);
 Route::post ('project-text-remover', [ProjectController::class, 'textDelete']);
 
@@ -85,3 +84,4 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
 
 
+ 
